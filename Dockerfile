@@ -2,12 +2,11 @@
 
 FROM gitlab-registry.cern.ch/atlas/statanalysis:main
 
+# the base image provides a user called "atlas" that has the correct uid (1000) for binder
+
 RUN source /release_setup.sh && python3 -m pip install --no-cache-dir notebook jupyterlab
-# will have installed things in $HOME/.local/bin ... need to ensure this is in the path
+# will have installed things in /home/atlas/.local/bin ... need to ensure this is in the path
 ENV PATH="/home/atlas/.local/bin:${PATH}"
 # Make sure the contents of our repo are in ${HOME}
 WORKDIR /home/atlas
-COPY . ${HOME}
-USER root
-RUN chown -R 1000 ${HOME}
-USER atlas
+COPY --chown=atlas . ${HOME}
